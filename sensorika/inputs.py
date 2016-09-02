@@ -7,7 +7,7 @@ Currently supported platforms are the Raspberry Pi, Linux, Windows and
 Mac OS X.
 
 """
-
+#pylint: skip-file
 # Copyright (c) 2016, Zeth
 # All rights reserved.
 #
@@ -2020,7 +2020,7 @@ class InputDevice(object):
             self._listener = None
         else:
             with open("/sys/class/input/%s/device/name" %
-                              self.get_char_name()) as name_file:
+                      self.get_char_name()) as name_file:
                 self.name = name_file.read().strip()
 
     def _get_path_infomation(self):

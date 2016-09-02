@@ -1,6 +1,7 @@
+"""`Server` part of the library"""
 try:
     import ujson as json
-except:
+except ImportError:
     #print('ujson not found, using json')
     import json
 

@@ -1,8 +1,10 @@
+"""DNS-like service to track and perform multiple
+updates on workers"""
 import datetime
 
 try:
     import ujson as json
-except:
+except ImportError:
     #print('ujson not found, using json')
     import json
 import logging
@@ -69,7 +71,7 @@ class ThreadedConnector(threading.Thread):
 """
 
 
-class ConnectorAsyncDB():
+class ConnectorAsyncDB(object):
     def __init__(self, ip, port, params, database):
         self.db = database
         self.params = params
@@ -113,7 +115,10 @@ class DatabaserLEVELDB():
 
     def add(self, name, data):
         if not self.db.closed:
-            self.db.put("{0}-{1}".format(name, time.time()).encode('utf8'), json.dumps(data).encode("utf8"))
+            self.db.put(
+                "{0}-{1}".format(name, time.time()).encode('utf8'),
+                json.dumps(data).encode("utf8")
+            )
 
     def getSessions(self, datefrom=None, dateto=None):
         df = b"0"
@@ -218,12 +223,14 @@ class Locator(threading.Thread):
                         if self.programs[data['name']]['port'] != data['port']:
                             self.programs[data['name']]['params'] = data['params']
                             self.programs[data['name']]['con'].stop()
-                            self.programs[data['name']]['con'] = ConnectorAsyncDB(data['ip'], data['async_port'],
-                                                                                  data['params'], self.db)
+                            self.programs[data['name']]['con'] = ConnectorAsyncDB(
+                                data['ip'], data['async_port'],
+                                data['params'], self.db)
                     else:
                         self.programs[data['name']] = dict(time=time.time(), params=data['params'])
-                        self.programs[data['name']]['con'] = ConnectorAsyncDB(data['ip'], data['async_port'],
-                                                                              data['params'], self.db)
+                        self.programs[data['name']]['con'] = ConnectorAsyncDB(
+                            data['ip'], data['async_port'],
+                            data['params'], self.db)
                     answer = dict(status='ok')
                 if data['action'] == 'list':
                     d = []

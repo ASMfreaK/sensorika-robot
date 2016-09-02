@@ -1,3 +1,4 @@
+"""`Client` part of library"""
 import datetime
 import threading
 import time
